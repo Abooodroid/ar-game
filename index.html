@@ -31,14 +31,11 @@
   </div>
 
   <!-- AR.js scene using A-Frame -->
-  <a-scene embedded arjs="sourceType: webcam; detectionMode: mono; fov: 80;">
+  <a-scene embedded arjs="sourceType: webcam; detectionMode: mono; fov: 120;">
     <!-- Define an image marker that will trigger AR content -->
     <a-marker preset="hiro">
       <a-box position="0 0.5 0" scale="0.5 0.5 0.5" color="blue"></a-box>
     </a-marker>
-
-    <!-- Define the camera with a wider FOV -->
-    <a-camera position="0 0 0" fov="120"></a-camera>
   </a-scene>
 
   <!-- JavaScript to handle AR interactions and dynamic UI changes -->
