@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Web AR Game</title>
+
+  <!-- Include A-Frame and AR.js -->
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
+
+  <style>
+    body { margin: 0; overflow: hidden; }
+    canvas { display: block; }
+    #ui-container { position: absolute; top: 20px; left: 20px; color: white; font-size: 24px; z-index: 10; }
+  </style>
+</head>
+<body>
+  <!-- AR.js scene using A-Frame -->
+  <a-scene embedded arjs>
+    <!-- Define an image marker that will trigger AR content -->
+    <a-marker preset="hiro">
+      <a-box position="0 0.5 0" color="blue"></a-box>
+    </a-marker>
+
+    <a-entity camera></a-entity>
+  </a-scene>
+
+  <!-- 2D UI overlay -->
+  <div id="ui-container">
+    <h2>Welcome to AR Game!</h2>
+    <p>Scan the marker to start playing.</p>
+  </div>
+
+  <!-- Add JavaScript to handle interactions -->
+  <script>
+    // JavaScript to handle AR interactions and dynamic UI changes
+    let markerDetected = false;
+
+    // Update the UI when the marker is detected
+    document.querySelector('a-marker').addEventListener('markerFound', function() {
+      markerDetected = true;
+      document.getElementById('ui-container').innerHTML = '<h2>AR Game Started!</h2><p>Interact with the AR content!</p>';
+    });
+
+    document.querySelector('a-marker').addEventListener('markerLost', function() {
+      markerDetected = false;
+      document.getElementById('ui-container').innerHTML = '<h2>Welcome to AR Game!</h2><p>Scan the marker to start playing.</p>';
+    });
+  </script>
+</body>
+</html>
