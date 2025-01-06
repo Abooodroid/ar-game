@@ -1,58 +1,84 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web AR Game</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AR Game</title>
+    <!-- Load A-Frame and AR.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
+  </head>
+  <body style="margin: 0; overflow: hidden;">
+    <!-- Define the AR Scene -->
+    <a-scene embedded arjs>
+      <!-- Define image targets with custom marker images -->
+      <a-marker type="pattern" url="markers/hiro.patt" id="marker1">
+        <a-entity 
+          geometry="primitive: box; width: 1; height: 1; depth: 1" 
+          position="0 0.5 0" 
+          material="color: red">
+        </a-entity>
+      </a-marker>
+    
+      <a-marker type="pattern" url="markers/kanji.patt" id="marker2">
+        <a-entity 
+          geometry="primitive: sphere; radius: 1" 
+          position="0 0.5 0" 
+          material="color: blue">
+        </a-entity>
+      </a-marker>
+    
+      <!-- Camera setup -->
+      <a-camera></a-camera>
+    </a-scene>
 
-  <!-- Include A-Frame and AR.js -->
-  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/AR.js/aframe/build/aframe-ar.js"></script>
+    <script>
+      const scannedTargets = [];
+      const totalTargets = 2;
 
-  <style>
-    body { margin: 0; overflow: hidden; }
-    canvas { display: block; }
-    #ui-container {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      color: white;
-      font-size: 24px;
-      z-index: 10;
-    }
-  </style>
-</head>
-<body>
+      // Function to handle scanning of image targets
+      function onTargetScanned(targetId) {
+        if (!scannedTargets.includes(targetId)) {
+          scannedTargets.push(targetId);
+          // Show question and animation for the target
+          displayQuestion(targetId);
+          checkGameEnd();
+        }
+      }
 
-  <!-- 2D UI overlay -->
-  <div id="ui-container">
-    <h2>Welcome to AR Game!</h2>
-    <p>Scan the marker to start playing.</p>
-  </div>
+      // Display question when a marker is scanned
+      function displayQuestion(targetId) {
+        alert("Question for " + targetId);
+      }
 
-  <!-- AR.js scene using A-Frame -->
-  <a-scene embedded arjs="sourceType: webcam; detectionMode: mono; fov: 120;">
-    <!-- Define an image marker that will trigger AR content -->
-    <a-marker preset="pattern-sss">
-      <a-box position="0 0.5 0" scale="0.5 0.5 0.5" color="blue"></a-box>
-    </a-marker>
-  </a-scene>
+      // Check if all targets have been scanned and show game end
+      function checkGameEnd() {
+        if (scannedTargets.length === totalTargets) {
+          const score = calculateScore();
+          alert("Game Over! Your score is " + score);
+          generateBarcode();
+        }
+      }
 
-  <!-- JavaScript to handle AR interactions and dynamic UI changes -->
-  <script>
-    let markerDetected = false;
+      // Calculate score based on scanned targets
+      function calculateScore() {
+        return scannedTargets.length * 10;
+      }
 
-    // Update the UI when the marker is detected
-    document.querySelector('a-marker').addEventListener('markerFound', function() {
-      markerDetected = true;
-      document.getElementById('ui-container').innerHTML = '<h2>AR Game Started!</h2><p>Interact with the AR content!</p>';
-    });
+      // Generate unique user ID and barcode
+      function generateBarcode() {
+        const userId = generateUniqueId();
+        alert("Generated Barcode for user: " + userId);
+      }
 
-    document.querySelector('a-marker').addEventListener('markerLost', function() {
-      markerDetected = false;
-      document.getElementById('ui-container').innerHTML = '<h2>Welcome to AR Game!</h2><p>Scan the marker to start playing.</p>';
-    });
-  </script>
+      // Generate a random unique ID for the user
+      function generateUniqueId() {
+        return 'user-' + Math.floor(Math.random() * 1000000);
+      }
 
-</body>
+      // Set up event listeners for marker scanning
+      document.querySelector('#marker1').addEventListener('markerFound', () => onTargetScanned('hiro'));
+      document.querySelector('#marker2').addEventListener('markerFound', () => onTargetScanned('kanji'));
+    </script>
+  </body>
 </html>
